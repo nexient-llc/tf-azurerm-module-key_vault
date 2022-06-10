@@ -37,3 +37,18 @@ resource "azurerm_key_vault" "key_vault" {
 
   tags = local.tags
 }
+
+resource "azurerm_key_vault_access_policy" "access_policy" {
+
+  for_each      = var.access_policies
+
+  key_vault_id = azurerm_key_vault.key_vault.id
+  tenant_id    = coalesce(each.value.tenant_id, data.azurerm_client_config.current.tenant_id)
+  object_id    = each.value.object_id
+
+  key_permissions = coalescelist(each.value.key_permissions, local.default_key_permissions)
+  certificate_permissions = coalescelist(each.value.certificate_permissions, local.default_certificate_permissions)
+  storage_permissions = coalescelist(each.value.storage_permissions, local.default_storage_permissions)
+  secret_permissions = coalescelist(each.value.secret_permissions, local.default_secret_permissions)
+
+}

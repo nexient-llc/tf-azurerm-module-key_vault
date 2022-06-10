@@ -1,6 +1,8 @@
 resource_group = {
-    name = "dev-test-devops"
+    name = "deb-test-devops"
     location = "eastus"
 }
 
-key_vault_name = "deb-test-kv-000"
+key_vault_name = "deb-test-akv-000"
+
+    
