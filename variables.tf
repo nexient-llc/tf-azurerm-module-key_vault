@@ -17,6 +17,10 @@ variable "resource_group" {
 variable "key_vault_name" {
 	description = "Name of the key vault"
 	type = string
+	validation {
+		condition = length(trimspace(var.key_vault_name)) <= 24 && length(trimspace(var.key_vault_name)) >= 3
+		error_message = "Key Vault length should be between 3 and 24."
+	}
 }
 
 variable "enabled_for_deployment" {
