@@ -12,43 +12,20 @@ resource "azurerm_key_vault" "key_vault" {
   soft_delete_retention_days      = var.soft_delete_retention_days
   purge_protection_enabled        = var.purge_protection_enabled
   sku_name                        = var.sku_name
-  
-  # Provide permission to dsahoo@nexient.com
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
+  # Required by terraform
+  dynamic "access_policy" {
+    for_each    = local.access_policies
 
-    certificate_permissions = [
-      "Get", "List", "Import", "Update", "ListIssuers", "GetIssuers", "Delete", "Recover", "Purge"
-    ]
+    content {
+      tenant_id    = coalesce(access_policy.value.tenant_id, data.azurerm_client_config.current.tenant_id)
+      object_id    = access_policy.value.object_id
 
-    key_permissions = [
-      "Get", "List", "Delete", "Create"
-    ]
-
-    secret_permissions = [
-      "Get", "List", "Delete", "Set"
-    ]
-
-    storage_permissions = [
-      "Get", "List", "Delete", "Set"
-    ]
+      key_permissions = coalescelist(access_policy.value.key_permissions, local.default_key_permissions)
+      certificate_permissions = coalescelist(access_policy.value.certificate_permissions, local.default_certificate_permissions)
+      storage_permissions = coalescelist(access_policy.value.storage_permissions, local.default_storage_permissions)
+      secret_permissions = coalescelist(access_policy.value.secret_permissions, local.default_secret_permissions)
+    }
   }
-
+  
   tags = local.tags
-}
-
-resource "azurerm_key_vault_access_policy" "access_policy" {
-
-  for_each      = var.access_policies
-
-  key_vault_id = azurerm_key_vault.key_vault.id
-  tenant_id    = coalesce(each.value.tenant_id, data.azurerm_client_config.current.tenant_id)
-  object_id    = each.value.object_id
-
-  key_permissions = coalescelist(each.value.key_permissions, local.default_key_permissions)
-  certificate_permissions = coalescelist(each.value.certificate_permissions, local.default_certificate_permissions)
-  storage_permissions = coalescelist(each.value.storage_permissions, local.default_storage_permissions)
-  secret_permissions = coalescelist(each.value.secret_permissions, local.default_secret_permissions)
-
 }

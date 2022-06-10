@@ -4,5 +4,3 @@ resource_group = {
 }
 
 key_vault_name = "deb-test-akv-000"
-
-    
