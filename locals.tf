@@ -21,10 +21,10 @@ locals {
       "Get", "List", "Import", "Update", "ListIssuers", "GetIssuers", "Delete", "Recover", "Purge"
 			]
 			key_permissions = [
-				"Get", "List", "Delete", "Create"
+				"Get", "List", "Delete", "Create", "Purge"
 			]
 			secret_permissions = [
-				"Get", "List", "Delete", "Set"
+				"Get", "List", "Delete", "Set", "Purge"
 			]
 			storage_permissions = [
 				"Get", "List", "Delete", "Set"

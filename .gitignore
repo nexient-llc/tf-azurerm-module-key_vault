@@ -8,6 +8,11 @@ components/
 .idea
 !examples/*.tfvars
 
+# All certs
+*.pfx
+*.cer
+*.pem
+
 # We don't want to commit the test run lock files
 .terraform.lock.hcl
 

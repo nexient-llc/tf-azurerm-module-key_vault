@@ -60,7 +60,7 @@ variable "custom_tags" {
 }
 
 variable "access_policies" {
-	description = "Additional Access policies for the vault except the current user which is default"
+	description = "Additional Access policies for the vault except the current user which are added by default"
 	type = map(object({
 		object_id = string
 		tenant_id = string
@@ -70,6 +70,35 @@ variable "access_policies" {
 		storage_permissions = list(string)
 	}))
 
+	default = {}
+}
+
+# Variables to import pre existing certificates to the key vault
+variable "certificates" {
+	description = "List of certificates to be imported. The pfx files should be present in the root of the module (path.root) and its name denoted as certificate_name"
+	type = map(object({
+		certificate_name = string
+		password = string
+	}))
+
+	default = {}
+}
+
+# Variables to import secrets
+variable "secrets" {
+	description = "List of secrets (name and value)"
+	type = map(string)
+	default = {}
+}
+
+# Variables to import Keys
+variable "keys" {
+	description = "List of keys to be created in key vault. Name of the key is the key of the map"
+	type = map(object({
+		key_type = string
+		key_size = number
+		key_opts = list(string)
+	}))
 	default = {}
 }
 

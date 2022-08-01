@@ -29,3 +29,36 @@ resource "azurerm_key_vault" "key_vault" {
   
   tags = local.tags
 }
+
+resource "azurerm_key_vault_certificate" "certs" {
+  for_each        = var.certificates
+  name         = replace(each.key, "_", "-")
+  key_vault_id = azurerm_key_vault.key_vault.id
+
+  certificate {
+    contents = filebase64("${path.root}/${each.value.certificate_name}")
+    password = each.value.password
+  }
+
+  tags = local.tags
+}
+
+resource "azurerm_key_vault_secret" "vault_secrets" {
+  for_each = var.secrets
+  name         = replace(each.key, "_", "-")
+  value        = each.value
+  key_vault_id = azurerm_key_vault.key_vault.id
+
+  tags = local.tags
+}
+
+resource "azurerm_key_vault_key" "vault_keys" {
+  for_each = var.keys
+  name         = replace(each.key, "_", "-")
+  key_vault_id = azurerm_key_vault.key_vault.id
+  key_type     = each.value.key_type
+  key_size     = each.value.key_size
+  key_opts = each.value.key_opts
+
+  tags = local.tags
+}
