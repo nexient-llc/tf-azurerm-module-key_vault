@@ -14,18 +14,51 @@ resource "azurerm_key_vault" "key_vault" {
   sku_name                        = var.sku_name
   # Required by terraform
   dynamic "access_policy" {
-    for_each    = local.access_policies
+    for_each = local.access_policies
 
     content {
-      tenant_id    = coalesce(access_policy.value.tenant_id, data.azurerm_client_config.current.tenant_id)
-      object_id    = access_policy.value.object_id
+      tenant_id = coalesce(access_policy.value.tenant_id, data.azurerm_client_config.current.tenant_id)
+      object_id = access_policy.value.object_id
 
-      key_permissions = coalescelist(access_policy.value.key_permissions, local.default_key_permissions)
+      key_permissions         = coalescelist(access_policy.value.key_permissions, local.default_key_permissions)
       certificate_permissions = coalescelist(access_policy.value.certificate_permissions, local.default_certificate_permissions)
-      storage_permissions = coalescelist(access_policy.value.storage_permissions, local.default_storage_permissions)
-      secret_permissions = coalescelist(access_policy.value.secret_permissions, local.default_secret_permissions)
+      storage_permissions     = coalescelist(access_policy.value.storage_permissions, local.default_storage_permissions)
+      secret_permissions      = coalescelist(access_policy.value.secret_permissions, local.default_secret_permissions)
     }
   }
-  
+
+  tags = local.tags
+}
+
+resource "azurerm_key_vault_certificate" "certs" {
+  for_each     = var.certificates
+  name         = replace(each.key, "_", "-")
+  key_vault_id = azurerm_key_vault.key_vault.id
+
+  certificate {
+    contents = filebase64("${path.root}/${each.value.certificate_name}")
+    password = each.value.password
+  }
+
+  tags = local.tags
+}
+
+resource "azurerm_key_vault_secret" "vault_secrets" {
+  for_each     = var.secrets
+  name         = replace(each.key, "_", "-")
+  value        = each.value
+  key_vault_id = azurerm_key_vault.key_vault.id
+
+  tags = local.tags
+}
+
+resource "azurerm_key_vault_key" "vault_keys" {
+  for_each     = var.keys
+  name         = replace(each.key, "_", "-")
+  key_vault_id = azurerm_key_vault.key_vault.id
+  key_type     = each.value.key_type
+  key_size     = each.value.key_size
+  key_opts     = each.value.key_opts
+
   tags = local.tags
 }
