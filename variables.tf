@@ -2,12 +2,14 @@
 # Common variables
 #########################################
 
-variable "resource_group" {
-  description = "target resource group resource mask"
-  type = object({
-    name     = string
-    location = string
-  })
+variable "resource_group_name" {
+  description = "name of the target resource group resource mask"
+  type        = string
+}
+
+variable "location" {
+  description = "(Required) The Azure Region where the Resource Group."
+  type        = string
 }
 
 #########################################
@@ -53,7 +55,7 @@ variable "sku_name" {
   default     = "standard"
 }
 
-variable "custom_tags" {
+variable "tags" {
   description = "Custom tags for the Key vault"
   type        = map(string)
   default     = {}
@@ -104,3 +106,8 @@ variable "keys" {
 
 
 
+variable "enable_rbac_authorization" {
+  description = "Bool Value to specify whether Azure Key Vault uses Role Based Access Control (RBAC) for authorization of data actions."
+  type        = bool
+  default     = false
+}
