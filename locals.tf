@@ -3,7 +3,7 @@ locals {
     "provisioner" : "Terraform"
   }
 
-  tags = merge(local.default_tags, var.custom_tags)
+  tags = merge(local.default_tags, var.tags)
 
   default_certificate_permissions = ["List"]
 
