@@ -61,3 +61,8 @@ azure_env.sh
 
 # Pre-commit hook
 .pre-commit-config.yaml
+
+# Certificates
+*.pfx
+*.cer
+*.pem
