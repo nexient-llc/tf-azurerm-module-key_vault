@@ -10,53 +10,64 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#########################################
-# Common variables
-#########################################
-
-variable "resource_group" {
-  description = "target resource group resource mask"
-  type = object({
-    name     = string
-    location = string
-  })
-}
-
-#########################################
-# Variables related to Key Vault
-#########################################
-
-variable "key_vault_name" {
-  description = "Name of the key vault"
+variable "product_family" {
+  description = <<EOF
+    (Required) Name of the product family for which the resource is created.
+    Example: org_name, department_name.
+  EOF
   type        = string
-  validation {
-    condition     = length(trimspace(var.key_vault_name)) <= 24 && length(trimspace(var.key_vault_name)) >= 3
-    error_message = "Key Vault length should be between 3 and 24."
+  default     = "dso"
+}
+
+variable "product_service" {
+  description = <<EOF
+    (Required) Name of the product service for which the resource is created.
+    For example, backend, frontend, middleware etc.
+  EOF
+  type        = string
+  default     = "kube"
+}
+
+variable "environment" {
+  description = "Environment in which the resource should be provisioned like dev, qa, prod etc."
+  type        = string
+  default     = "dev"
+}
+
+variable "environment_number" {
+  description = "The environment count for the respective environment. Defaults to 000. Increments in value of 1"
+  type        = string
+  default     = "000"
+}
+
+variable "region" {
+  description = "AWS Region in which the infra needs to be provisioned"
+  type        = string
+  default     = "eastus"
+}
+
+variable "resource_names_map" {
+  description = "A map of key to resource_name that will be used by tf-module-resource_name to generate resource names"
+  type = map(object(
+    {
+      name       = string
+      max_length = optional(number, 60)
+    }
+  ))
+  default = {
+    rg = {
+      name       = "rg"
+      max_length = 60
+    }
+    kv = {
+      name       = "kv"
+      max_length = 24
+    }
+    msi = {
+      name       = "msi"
+      max_length = 60
+    }
   }
-}
-
-variable "enabled_for_deployment" {
-  description = "If Azure VM is permitted to retrieve secrets"
-  type        = bool
-  default     = false
-}
-
-variable "enabled_for_template_deployment" {
-  description = "If Azure RM is permitted to retrieve secrets"
-  type        = bool
-  default     = false
-}
-
-variable "soft_delete_retention_days" {
-  description = "Number of retention days for soft delete"
-  type        = number
-  default     = 7
-}
-
-variable "purge_protection_enabled" {
-  description = "If purge_protection is enabled"
-  type        = bool
-  default     = false
 }
 
 variable "sku_name" {
@@ -65,7 +76,7 @@ variable "sku_name" {
   default     = "standard"
 }
 
-variable "custom_tags" {
+variable "tags" {
   description = "Custom tags for the Key vault"
   type        = map(string)
   default     = {}
