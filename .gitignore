@@ -58,3 +58,11 @@ terraform.rc
 azure_env.sh
 .releaserc.json
 .tflint.hcl
+
+# Pre-commit hook
+.pre-commit-config.yaml
+
+# Certificates
+*.pfx
+*.cer
+*.pem

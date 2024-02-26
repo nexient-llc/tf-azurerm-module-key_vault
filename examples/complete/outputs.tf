@@ -11,38 +11,40 @@
 // limitations under the License.
 
 output "key_vault_id" {
-  value = azurerm_key_vault.key_vault.id
+  value = module.key_vault.key_vault_id
 }
 
 output "vault_uri" {
-  value = azurerm_key_vault.key_vault.vault_uri
+  value = module.key_vault.vault_uri
 }
 
 output "access_policies_object_ids" {
-  value = try(azurerm_key_vault.key_vault.access_policy[*].object_id)
+  value = module.key_vault.access_policies_object_ids
 }
 
 output "key_vault_name" {
-  value = azurerm_key_vault.key_vault.name
+  value = module.key_vault.key_vault_name
 }
 
 output "certificate_ids" {
-  value = [
-    for cert in azurerm_key_vault_certificate.certs : cert.id
-  ]
+  value     = module.key_vault.certificate_ids
   sensitive = false
 }
 
 output "secret_ids" {
-  value = [
-    for secret in azurerm_key_vault_secret.vault_secrets : secret.id
-  ]
+  value     = module.key_vault.secret_ids
   sensitive = false
 }
 
 output "key_ids" {
-  value = [
-    for key in azurerm_key_vault_key.vault_keys : key.id
-  ]
+  value     = module.key_vault.key_ids
   sensitive = false
+}
+
+output "resource_group_name" {
+  value = module.resource_group.name
+}
+
+output "resource_group_id" {
+  value = module.resource_group.id
 }
